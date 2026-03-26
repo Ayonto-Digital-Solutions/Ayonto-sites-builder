@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: [self-hosted, linux, ARM64]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: PHP Syntax Check
+        run: find . -name "*.php" -not -path "./vendor/*" -not -path "./node_modules/*" | xargs -n1 php -l
+
+      - name: Install Composer dependencies
+        if: hashFiles('composer.json') != ''
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPStan
+        if: hashFiles('phpstan.neon') != '' || hashFiles('phpstan.neon.dist') != ''
+        run: vendor/bin/phpstan analyse --no-progress
