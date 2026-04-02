@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: php:8.2-cli-alpine
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: PHP Syntax Check
         run: find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \;
 
